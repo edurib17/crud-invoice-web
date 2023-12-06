@@ -1,0 +1,45 @@
+<form>
+  <div class="form-modal-edit-item">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input
+        [(ngModel)]="name"
+        [ngModelOptions]="{ standalone: true }"
+        matInput
+        placeholder="Nome"
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field appearance="outline">
+      <mat-label>Quantidade</mat-label>
+      <input
+        type="number"
+        [(ngModel)]="quantity"
+        [ngModelOptions]="{ standalone: true }"
+        matInput
+        placeholder="Qtd."
+      />
+    </mat-form-field>
+    <br />
+    <mat-form-field appearance="outline">
+      <mat-label>Valor</mat-label>
+      <input
+        type="number"
+        [(ngModel)]="unitPrice"
+        [ngModelOptions]="{ standalone: true }"
+        matInput
+        placeholder="Valor"
+      />
+    </mat-form-field>
+    <div
+      mat-dialog-actions
+      class="action"
+      style="display: flex; justify-content: end; margin-top: 16px"
+    >
+      <button mat-raised-button type="button" [mat-dialog-close]="false">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" (click)="updateItem()" type="submit">Salvar</button>
+    </div>
+  </div>
+</form>

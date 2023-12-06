@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditItemScreenComponent } from '../edit-item-screen/edit-item-screen.component';
+
 
 export interface InvoiceItemElement {
   id: string | null;
@@ -17,56 +21,110 @@ export interface InvoiceItemElement {
   styleUrls: ['./edit-screen.component.css'],
 })
 export class EditScreenComponent implements OnInit {
-  constructor(private api: ApiService, private toastr: ToastrService) {}
-  ngOnInit(): void {}
+  constructor(
+    private api: ApiService,
+    private toastr: ToastrService,
+    private router: Router,
+    public dialog: MatDialog,
+    private routes: ActivatedRoute
+  ) {}
 
-  errorMessage: string = 'Houve um erro ao salvar!';
-  successMessage: string = 'Salvo com sucesso!';
+
   id: string | null = null;
   invoiceNumber: string = '';
-  date: Date = new Date();
+  date: Date| null = new Date();
   client: string = '';
   description: string = '';
   items: InvoiceItemElement[] = [];
-  displayedColumns: string[] = ['name', 'quantity', 'unitPrice', 'total'];
+  displayedColumns: string[] = [
+    'name',
+    'quantity',
+    'unitPrice',
+    'total',
+    'action',
+  ];
+
+  ngOnInit(): void {
+    this.id = this.routes.snapshot.paramMap.get('id');
+    if (this.id != null) {
+      this.getOneInvoice(this.id);
+    }
+  }
+
+  getOneInvoice(id: string) {
+    this.api.getInvoice(id).subscribe((res) => {
+      const newItems: InvoiceItemElement[] = [];
+      this.invoiceNumber = res.invoiceNumber;
+      this.client = res.client;
+      this.description = res.description;
+      this.date = res.date;
+
+      if (res.items && res.items.length > 0) {
+        res.items.forEach((i: InvoiceItemElement) => {
+          newItems.push({ ...i, isNew: false });
+        });
+      }
+      this.items = newItems;
+    });
+  }
 
   onSubmit() {
     if (this.validation()) return;
-    if (!this.id) {
-      this.createInvoice();
-    } else {
-      this.updateInvoice();
-    }
-
+    this.saveInvoice();
     this.id = null;
     this.invoiceNumber = '';
-    this.date = new Date();
+    this.date = null;
     this.client = '';
     this.description = '';
+    this.items = [];
   }
 
-  createInvoice() {
-    this.api.createInvoice({
-      id: null,
-      invoiceNumber: this.invoiceNumber,
-      date: new Date(),
-      client: this.client,
-      description: this.description,
-      items: this.items.map((i) => {
-        return { ...i, id: i.isNew ? null : i.id };
-      }),
+  openDialog(invoiceItem: InvoiceItemElement): void {
+    const dialogRef = this.dialog.open(EditItemScreenComponent, {
+      data: {
+        item: invoiceItem,
+        updateFunction: (updatedItem: InvoiceItemElement) => {
+          const updatedItems = this.items.map(
+            (item) =>
+              item.id === updatedItem.id
+                ? { ...item, ...updatedItem }
+                : item
+          );
+          this.items = updatedItems;
+          dialogRef.close();
+        },
+      },
     });
   }
 
-  updateInvoice() {
-    this.api.createInvoice({
-      id: null,
+  saveInvoice() {
+    const invoiceData = {
+      id: this.id ? this.id : null,
       invoiceNumber: this.invoiceNumber,
-      date: new Date(),
+      date: this.date,
       client: this.client,
       description: this.description,
-      items: [],
-    });
+      items: this.items.map((i) => ({ ...i, id: i.isNew ? null : i.id })),
+    };
+
+    this.api.saveInvoice(invoiceData).subscribe(
+      (_: any) => {
+        this.router.navigate(['']);
+        this.toastr.success('Nota salva com sucesso!', '', {
+          timeOut: 1000,
+        });
+      },
+      (error) => {
+        this.toastr.error(
+          'Ocorreu um erro ao salvar a nota. Tente novamente.',
+          '',
+          {
+            timeOut: 5000,
+          }
+        );
+        console.error(error);
+      }
+    );
   }
 
   addRecord() {
@@ -76,9 +134,14 @@ export class EditScreenComponent implements OnInit {
       quantity: 1,
       unitPrice: 0.0,
       isNew: true,
-      invoice: null,
+      invoice: this.id ? { id: this.id } : null,
     };
     this.items = [...this.items, newItem];
+  }
+
+  removeRecord(id: string) {
+    const newItems: InvoiceItemElement[] = this.items.filter((i) => i.id != id);
+    this.items = newItems;
   }
 
   validation() {

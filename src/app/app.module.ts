@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { EditScreenComponent } from './components/edit-screen/edit-screen.component';
 import { ListScreenComponent } from './components/list-screen/list-screen.component';
+import { EditItemScreenComponent } from './components/edit-item-screen/edit-item-screen.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from './services/api.service';
@@ -23,13 +24,27 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, MatNativeDateModule } from '@angular/material/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 
+const MY_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
+
+
 @NgModule({
-  declarations: [AppComponent, EditScreenComponent, ListScreenComponent],
+  declarations: [AppComponent, EditScreenComponent, ListScreenComponent, EditItemScreenComponent],
   imports: [
     BrowserModule,
     MatSliderModule,
@@ -52,9 +67,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatTabsModule,
     MatSnackBarModule,
     MatDialogModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
   ],
-  providers: [ApiService],
+  providers: [ApiService,
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

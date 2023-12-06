@@ -5,6 +5,7 @@ import { ListScreenComponent } from './components/list-screen/list-screen.compon
 
 const routes: Routes = [
   { path:"edit", component: EditScreenComponent},
+  { path:"edit/:id", component: EditScreenComponent},
   { path:"", component: ListScreenComponent}
 ];
 

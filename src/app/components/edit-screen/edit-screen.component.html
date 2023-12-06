@@ -16,23 +16,21 @@
               />
             </mat-form-field>
 
-            <!-- <mat-form-field appearance="outline" class="example-form-field">
+            <mat-form-field appearance="outline" class="example-form-field">
               <mat-label>Data</mat-label>
-              <input matInput [(ngModel)]="date" [ngModelOptions]="{standalone: true}" [matDatepicker]="datepicker"  />
-              <mat-hint>{{'DD/MM/YYYY'}}</mat-hint>
+              <input
+                matInput
+                [(ngModel)]="date"
+                [ngModelOptions]="{ standalone: true }"
+                [matDatepicker]="datepicker"
+              />
+              <mat-hint>{{ "DD/MM/YYYY" }}</mat-hint>
               <mat-datepicker-toggle
                 matSuffix
                 [for]="datepicker"
               ></mat-datepicker-toggle>
-              <mat-datepicker #datepicker>
-                <mat-datepicker-actions>
-                  <button mat-button matDatepickerCancel>Cancelar</button>
-                  <button mat-raised-button color="primary" matDatepickerApply>
-                    Selecionar
-                  </button>
-                </mat-datepicker-actions>
-              </mat-datepicker>
-            </mat-form-field> -->
+              <mat-datepicker #datepicker></mat-datepicker>
+            </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Cliente</mat-label>
@@ -86,13 +84,34 @@
           </ng-container>
           <ng-container matColumnDef="unitPrice">
             <th mat-header-cell *matHeaderCellDef>Valor</th>
-            <td mat-cell *matCellDef="let element">{{ element.unitPrice }}</td>
+            <td mat-cell *matCellDef="let element">
+              {{ element.unitPrice | currency : "BRL" : "symbol" : "1.2-2" }}
+            </td>
           </ng-container>
           <!-- Total Column -->
           <ng-container matColumnDef="total">
             <th mat-header-cell *matHeaderCellDef>Total</th>
             <td mat-cell *matCellDef="let element">
-              {{ element.quantity * element.unitPrice | currency : "BRL" : "symbol" : "1.2-2" }}
+              {{
+                element.quantity * element.unitPrice
+                  | currency : "BRL" : "symbol" : "1.2-2"
+              }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button color="primary" (click)="openDialog(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="removeRecord(row.id)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </ng-container>
 

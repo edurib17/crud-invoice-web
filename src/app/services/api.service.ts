@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,7 @@ export class ApiService {
 
   constructor(
     private http: HttpClient,
-    private toastr: ToastrService,
-    private router: Router
+    private toastr: ToastrService
   ) {}
 
   getAllInvoices(): Observable<any> {
@@ -27,26 +26,15 @@ export class ApiService {
     );
   }
 
-  createInvoice(invoice: any): void {
-    this.http
-      .post(`${this.apiUrl}`, invoice, { responseType: 'text' })
-      .subscribe(
-        (resultData: any) => {
-          this.toastr.success('Nota salva com sucesso!', '', {
-            timeOut: 1000,
-          });
-        },
-        (error) => {
-          this.toastr.error(
-            'Ocorreu um erro ao salvar a nota. Tente novamente.',
-            '',
-            {
-              timeOut: 5000,
-            }
-          );
-        }
-      );
-    this.getAllInvoices();
-    this.router.navigate(['/']);
+  getInvoice(id:string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`)
+  }
+
+  saveInvoice(invoice: any): Observable<any> {
+   return this.http[invoice.id ? 'put' : 'post'](`${this.apiUrl}`, invoice, { responseType: 'text' })
+  }
+
+  deleteInvoice(id: string): Observable<any>{
+   return this.http.delete(`${this.apiUrl}/${id}`)
   }
 }
