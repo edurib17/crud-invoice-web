@@ -1,0 +1,51 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+  <button mat-raised-button color="primary" style="margin-left: auto;" routerLink="edit">Adicionar</button>
+</div>
+<table mat-table [dataSource]="invoices" class="mat-elevation-z8">
+
+   <ng-container matColumnDef="invoiceNumber">
+    <th mat-header-cell *matHeaderCellDef>Nº</th>
+    <td mat-cell *matCellDef="let element">{{ element.invoiceNumber }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="client">
+    <th mat-header-cell *matHeaderCellDef>Cliente</th>
+    <td mat-cell *matCellDef="let element">{{ element.client }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef>Data</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.date | date : "dd/MM/yyyy" }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef>Descrição</th>
+    <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef>Total</th>
+    <td mat-cell *matCellDef="let element">{{ element.total | currency:'BRL':'symbol':'1.2-2'}}</td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
+    <td mat-cell *matCellDef="let row">
+      <button mat-icon-button color="primary">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Header and Row Definitions -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+

@@ -1,0 +1,125 @@
+<div class="container-edit">
+  <mat-card>
+    <mat-tab-group mat-align-tabs="center">
+      <mat-tab label="Informações Basicas">
+        <mat-card-title style="margin-top: 20px">Nota Fiscal</mat-card-title>
+        <mat-card-content>
+          <form class="invoice-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Nº</mat-label>
+              <input
+                type="text"
+                [(ngModel)]="invoiceNumber"
+                [ngModelOptions]="{ standalone: true }"
+                matInput
+                placeholder="Entre com número da nota"
+              />
+            </mat-form-field>
+
+            <!-- <mat-form-field appearance="outline" class="example-form-field">
+              <mat-label>Data</mat-label>
+              <input matInput [(ngModel)]="date" [ngModelOptions]="{standalone: true}" [matDatepicker]="datepicker"  />
+              <mat-hint>{{'DD/MM/YYYY'}}</mat-hint>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="datepicker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #datepicker>
+                <mat-datepicker-actions>
+                  <button mat-button matDatepickerCancel>Cancelar</button>
+                  <button mat-raised-button color="primary" matDatepickerApply>
+                    Selecionar
+                  </button>
+                </mat-datepicker-actions>
+              </mat-datepicker>
+            </mat-form-field> -->
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cliente</mat-label>
+              <input
+                [(ngModel)]="client"
+                [ngModelOptions]="{ standalone: true }"
+                matInput
+                placeholder="Entre com nome do cliente"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Descrição</mat-label>
+              <textarea
+                [(ngModel)]="description"
+                [ngModelOptions]="{ standalone: true }"
+                matInput
+                placeholder="Entre com a descrição"
+              ></textarea>
+            </mat-form-field>
+          </form>
+        </mat-card-content>
+      </mat-tab>
+      <mat-tab label="Items">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            margin-top: 16px;
+          "
+        >
+          <button
+            mat-raised-button
+            color="primary"
+            style="margin-left: auto"
+            (click)="addRecord()"
+          >
+            Adicionar Item
+          </button>
+        </div>
+        <table mat-table [dataSource]="items">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantidade</th>
+            <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
+          </ng-container>
+          <ng-container matColumnDef="unitPrice">
+            <th mat-header-cell *matHeaderCellDef>Valor</th>
+            <td mat-cell *matCellDef="let element">{{ element.unitPrice }}</td>
+          </ng-container>
+          <!-- Total Column -->
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Total</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.quantity * element.unitPrice | currency : "BRL" : "symbol" : "1.2-2" }}
+            </td>
+          </ng-container>
+
+          <!-- Header and Row Definitions -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </mat-tab>
+    </mat-tab-group>
+    <div
+      style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px;
+        margin-top: 10px;
+      "
+    >
+      <button mat-raised-button routerLink="">Cancelar</button>
+      <button
+        type="submit"
+        mat-raised-button
+        color="primary"
+        (click)="onSubmit()"
+      >
+        Salvar
+      </button>
+    </div>
+  </mat-card>
+</div>
